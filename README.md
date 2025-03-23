@@ -1,16 +1,18 @@
-# Python Data transfer simulator
+# Python Data Transfer Simulator
 
-Python-based UDP data transfer simulator
+Python-based UDP data transfer simulator for reliable file transfer over UDP.
 
-## 1- How to compile and run your code
+---
 
-### Clone repository
+## 1. How to Compile and Run the Code
+
+### Clone the Repository
 
 ```
 git clone https://github.com/50516021/Python_data_transfer.git
 ```
 
-### Environment setting
+### Environment Setup
 
 Use `requirements.txt` to install necessary packages:
 
@@ -18,87 +20,133 @@ Use `requirements.txt` to install necessary packages:
 pip install -r requirements.txt
 ```
 
-### [ping] - Running main code
+---
 
-The main script `UDP_data_transfer.py` will behave as both receiver/sender.<br>
-(replace `<python>` depending your python environment):
+## 2. Running the Main Code
 
-> Note: **Open two separated terminal to excecute both receiver/sender.**
+The main script `UDP_data_transfer.py` can be used to run both the sender and receiver.  
+**Note:** Open two separate terminals to execute the sender and receiver.
 
-In your terminal 1, excecute
+### 2.1 Running the Receiver
 
-```
-sudo <python> my_ping.py <host address>
-
-```
-
-### [traceroute] - Running main code
-
-The main script `my_traceroute.py` will check your network routing to the network host.<br>
-(replace `<python>` depending your python environment):
-
-> Note: **You need to use `sudo` command to operate this to use raw sockets to compose ICMP packets.**
+In one terminal, execute the following command to start the receiver:
 
 ```
-sudo <python> my_traceroute.py <host address>
+python UDP_data_transfer.py -role receiver -ip <receiver_ip> -port <receiver_port> -frcv <output_file>
 ```
 
-### Windows operation:
+#### Receiver Options:
 
-If using Windows, ensure Windows Defender Firewall allows ICMP traffic:
+- `-role receiver`: Specifies the role as the receiver.
+- `-ip`: The IP address to bind the receiver to (default: `127.0.0.1`).
+- `-port`: The port number to bind the receiver to (default: `5001`).
+- `-frcv`: The name of the file to save the received data (default: `received_file.txt`).
+- `-loss`: Probability of packet loss (default: `0.1`).
+- `-corr`: Probability of packet corruption (default: `0.1`).
+- `-size`: Size of each packet in bytes (default: `1024`).
 
-- Turn Firewall off (not recommended, turn it back on after testing).
-- Create an Inbound ICMP Rule. (see this link: [Link](https://learn.microsoft.com/en-us/windows/security/operating-system-security/network-security/windows-firewall/configure))
-- Enable existing inbound ICMP rule. Look for advanced setting in printer and sharing settings and find inbound ICMP echo request.
-- Use the argparse module in Python to parse command-line arguments.
-
-## 2- Examples of command-line usage
-
-### 2.1- Ping options
-
-`-c count`: Stop after sending (and receiving) count ECHO_RESPONSE packets. If this option is not specified, ping will operate until interrupted.<br>
-`-i wait`: Wait for 'wait' seconds between sending each packet. Default is one second.<br>
-`-s packetsize`: Specify the number of data bytes to be sent. Default is 56 (64 ICMP data bytes including the header).<br>
-`-t timeout`: Specify a timeout in seconds before ping exits regardless of how many packets have been received.<br>
-
-Example usage:
+#### Example:
 
 ```
-sudo <python> my_ping.py -c 5   <host address> # stop at 5 packets
-sudo <python> my_ping.py -i 2   <host address> # wait for 2 seconds to send another packet
-sudo <python> my_ping.py -s 112 <host address> # specify the packet size as 112 bytes
-sudo <python> my_ping.py -t 2   <host address> # set 2 seconds time limit for receiving packets
+python UDP_data_transfer.py -role receiver -ip 127.0.0.1 -port 5001 -frcv received_file.txt
 ```
 
-### 2.2- Traceroute options
+---
 
-`-n`: Print hop addresses numerically rather than symbolically and numerically. <br>
-`-q nqueries`: Set the number of probes per TTL to nqueries. <br>
-`-S`: Print a summary of how many probes were not answered for each hop. <br>
+### 2.2 Running the Sender
 
-Example usage:
+In another terminal, execute the following command to start the sender:
 
 ```
-sudo <python> my_traceroute.py -n   <host address> # print hop addresses numerically
-sudo <python> my_traceroute.py -q 2 <host address> # set 2 quesries per TTL
-sudo <python> my_traceroute.py -S   <host address> # print out summary of percentage of probes
+python UDP_data_transfer.py -role sender -ip <receiver_ip> -port <receiver_port> -fsnd <input_file>
 ```
 
-## 3- Reference
+#### Sender Options:
 
-- [ping(8) - Linux man page](https://linux.die.net/man/8/ping) <br>
-  https://linux.die.net/man/8/ping
-- [traceroute(8) - Linux man page](https://linux.die.net/man/8/traceroute) <br>
-  https://linux.die.net/man/8/traceroute
+- `-role sender`: Specifies the role as the sender.
+- `-ip`: The IP address of the receiver (default: `127.0.0.1`).
+- `-port`: The port number of the receiver (default: `5001`).
+- `-fsnd`: The name of the file to send (default: `test.txt`).
+- `-timeout`: Timeout for ACK in seconds (default: `2`).
+- `-max_retries`: Maximum retries for sending packets (default: `5`).
+- `-reorder`: Probability of packet reordering (default: `0.0`).
 
-### Author
+#### Example:
+
+```
+python UDP_data_transfer.py -role sender -ip 127.0.0.1 -port 5001 -fsnd test.txt
+```
+
+---
+
+## 3. Features of the Protocol
+
+### 3.1 Reliable Data Transfer
+
+- Implements retransmission logic with a maximum retry limit (`-max_retries`).
+- Uses ACKs to confirm successful packet delivery.
+
+### 3.2 EOF Handling
+
+- The sender sends a special EOF packet with a flag to indicate the end of the file.
+- The receiver identifies the EOF packet using the flag and terminates the transfer process.
+
+### 3.3 Simulated Network Conditions
+
+- Simulates packet loss and corruption using the `simulate_network_conditions` function.
+- Configurable via `-loss` (packet loss probability) and `-corr` (packet corruption probability).
+
+### 3.4 Packet Reordering
+
+- Simulates packet reordering with the `-reorder` option.
+
+---
+
+## 4. Example Usage
+
+### 4.1 Receiver
+
+Start the receiver to listen for incoming packets:
+
+```
+python UDP_data_transfer.py -role receiver -ip 127.0.0.1 -port 5001 -frcv output.txt
+```
+
+### 4.2 Sender
+
+Send a file to the receiver:
+
+```
+python UDP_data_transfer.py -role sender -ip 127.0.0.1 -port 5001 -fsnd input.txt
+```
+
+### 4.3 Simulating Network Conditions
+
+To simulate packet loss and corruption:
+
+```
+python UDP_data_transfer.py -role sender -ip 127.0.0.1 -port 5001 -fsnd input.txt -loss 0.2 -corr 0.1
+```
+
+---
+
+## 5. Notes
+
+- Ensure that the sender and receiver use the same IP address and port number.
+- Use separate terminals for the sender and receiver.
+- For testing, you can use `127.0.0.1` as the IP address to simulate communication on the same machine.
+
+---
+
+## 6. Author
 
 **Akira Takeuchi**
 
-- [github/50516021s](https://github.com/50516021)
+- [GitHub](https://github.com/50516021)
 - [Official Homepage](https://akiratakeuchi.com/)
 
-### License
+---
 
-Copyright © 2025, [Akira Takeuchi](https://github.com/50516021).
+## 7. License
+
 Released under the [MIT License](LICENSE).
