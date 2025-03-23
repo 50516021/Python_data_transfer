@@ -1,4 +1,4 @@
-# Manual Ping and Traceroute
+# Python Data transfer simulator
 
 Python-based UDP data transfer simulator
 
@@ -7,7 +7,7 @@ Python-based UDP data transfer simulator
 ### Clone repository
 
 ```
-git clone https://github.com/50516021/manual_ping_traceroute.git
+git clone https://github.com/50516021/Python_data_transfer.git
 ```
 
 ### Environment setting
@@ -20,10 +20,12 @@ pip install -r requirements.txt
 
 ### [ping] - Running main code
 
-The main script `my_ping.py` will check your network connection to the network host by sending ICMP ECHO_REQUEST to the host.<br>
+The main script `UDP_data_transfer.py` will behave as both receiver/sender.<br>
 (replace `<python>` depending your python environment):
 
-> Note: **You need to use `sudo` command to operate this to use raw sockets to compose ICMP packets.**
+> Note: **Open two separated terminal to excecute both receiver/sender.**
+
+In your terminal 1, excecute
 
 ```
 sudo <python> my_ping.py <host address>
