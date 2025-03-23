@@ -1,0 +1,17 @@
+\begin{sphinxtheindex}
+\let\bigletter\sphinxstyleindexlettergroup
+\let\spxpagem \sphinxstyleindexpagemain
+\let\spxentry \sphinxstyleindexentry
+\let\spxextra \sphinxstyleindexextra
+
+  \bigletter M
+  \item \spxentry{main()}\spxextra{in module UDP\_data\_transfer}, \hyperpage{3}
+  \item \spxentry{module}
+    \subitem \spxentry{UDP\_data\_transfer}, \hyperpage{3}
+
+  \indexspace
+  \bigletter U
+  \item \spxentry{UDP\_data\_transfer}
+    \subitem \spxentry{module}, \hyperpage{3}
+
+\end{sphinxtheindex}
